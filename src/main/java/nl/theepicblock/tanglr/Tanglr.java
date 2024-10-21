@@ -1,5 +1,10 @@
 package nl.theepicblock.tanglr;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredItem;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -28,17 +33,18 @@ public class Tanglr {
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "tanglr" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-//    // Creates a creative tab with the id "tanglr:tab" for the example item, that is placed after the combat tab
-//    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
-//            .title(Component.translatable("itemGroup.tanglr"))
-//            .withTabsBefore(CreativeModeTabs.COMBAT)
-//            .icon(() -> EXAMPLE_ITEM.get().getDefaultInstance())
-//            .displayItems((parameters, output) -> {
-//                output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
-//            }).build());
+    public static final DeferredItem<Item> CLOCK_ITEM = ITEMS.registerSimpleItem("clock", new Item.Properties());
 
-    // The constructor for the mod class is the first code that is run when your mod is loaded.
-    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
+    // Creates a creative tab with the id "tanglr:tab" for the example item, that is placed after the combat tab
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.tanglr"))
+            .withTabsBefore(CreativeModeTabs.COMBAT)
+            .icon(() -> CLOCK_ITEM.get().getDefaultInstance())
+            .displayItems((parameters, output) -> {
+                // For your own tabs, this method is preferred over the event
+                output.accept(CLOCK_ITEM.get());
+            }).build());
+
     public Tanglr(IEventBus modEventBus, ModContainer modContainer) {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
