@@ -33,7 +33,7 @@ public class Tanglr {
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "tanglr" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    public static final DeferredItem<Item> CLOCK_ITEM = ITEMS.registerSimpleItem("clock", new Item.Properties());
+    public static final DeferredItem<ClockItem> CLOCK_ITEM = ITEMS.registerItem("clock", ClockItem::new, new Item.Properties());
 
     // Creates a creative tab with the id "tanglr:tab" for the example item, that is placed after the combat tab
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
