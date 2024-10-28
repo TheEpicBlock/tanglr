@@ -85,10 +85,4 @@ public class FutureServerLevel extends ServerLevel {
         accessor.getEntityManager().tick();
         profilerfiller.pop();
     }
-
-    @Override
-    public void save(@Nullable ProgressListener progress, boolean flush, boolean skipSave) {
-        // TODO
-    }
-
 }
