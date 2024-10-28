@@ -34,4 +34,9 @@ public class LevelManager {
                 presentName.getNamespace().replace("_", "__")+"_"+presentName.getPath());
         return ResourceKey.create(present.registryKey(), futureName);
     }
+
+    public static ServerLevel toFuture(ServerLevel present) {
+        var futureKey = toFuture(present.dimension());
+        return present.getServer().getLevel(futureKey);
+    }
 }
