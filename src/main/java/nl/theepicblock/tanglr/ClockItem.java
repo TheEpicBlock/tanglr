@@ -1,5 +1,6 @@
 package nl.theepicblock.tanglr;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -17,6 +18,7 @@ public class ClockItem extends Item {
         ItemStack itemstack = player.getItemInHand(hand);
 
         if (!level.isClientSide) {
+            var sPlayer = (ServerPlayer)player;
             // TODO do timetravel
         }
 

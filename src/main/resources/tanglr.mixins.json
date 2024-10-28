@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "nl.theepicblock.tanglr.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MinecraftServerMixin",
+    "ServerChunkCacheMixin",
+    "ServerLevelAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

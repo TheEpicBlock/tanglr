@@ -1,10 +1,14 @@
 package nl.theepicblock.tanglr;
 
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -56,10 +60,7 @@ public class Tanglr {
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
 
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (Tanglr) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-//        NeoForge.EVENT_BUS.register(this);
+        modEventBus.addListener(Tanglr::onRegister);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -68,5 +69,17 @@ public class Tanglr {
     private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
         LOGGER.info("HELLO FROM COMMON SETUP");
+    }
+
+    public static void onRegister(RegisterEvent event) {
+        event.register(
+                Registries.LEVEL_STEM,
+                registry -> {
+                    LOGGER.debug("WHEEE :DD");
+                    event.getRegistry().forEach(entry -> {
+                        LOGGER.debug("Generating future dimension for {}", entry);
+                    });
+                }
+        );
     }
 }
