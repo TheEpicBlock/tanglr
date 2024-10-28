@@ -153,33 +153,33 @@ public class FutureChunkGenerator extends ChunkGenerator {
         }
     }
 
-//    @Override
-//    public @Nullable Pair<BlockPos,Holder<Structure>> findNearestMapStructure(ServerLevel level, HolderSet<Structure> structure, BlockPos pos, int searchRadius, boolean skipKnownStructures) {
-//        return null;
-//    }
-//
-//    @Override
-//    public WeightedRandomList<MobSpawnSettings.SpawnerData> getMobsAt(Holder<Biome> biome, StructureManager structureManager, MobCategory category, BlockPos pos) {
-//        return WeightedRandomList.create();
-//    }
-//
-//    @Override
-//    public void createStructures(RegistryAccess registryAccess, ChunkGeneratorStructureState structureState, StructureManager structureManager, ChunkAccess chunk, StructureTemplateManager structureTemplateManager) {
-//    }
-//
-//    @Override
-//    public void createReferences(WorldGenLevel level, StructureManager structureManager, ChunkAccess chunk) {
-//    }
+    @Override
+    public @Nullable Pair<BlockPos,Holder<Structure>> findNearestMapStructure(ServerLevel level, HolderSet<Structure> structure, BlockPos pos, int searchRadius, boolean skipKnownStructures) {
+        return null;
+    }
 
-//    @Override
-//    public CompletableFuture<ChunkAccess> createBiomes(RandomState randomState, Blender blender, StructureManager structureManager, ChunkAccess chunk) {
-//        return parent.getChunkSource().getChunkFuture(chunk.getPos().x, chunk.getPos().z, ChunkStatus.BIOMES, true).thenApply((pChunkR) -> {
-//            pChunkR.ifSuccess((pChunk) -> {
-//                chunk.fillBiomesFromNoise((x,y,z,s) -> pChunk.getNoiseBiome(x,y,z), null);
-//            });
-//            return chunk;
-//        });
-//    }
+    @Override
+    public WeightedRandomList<MobSpawnSettings.SpawnerData> getMobsAt(Holder<Biome> biome, StructureManager structureManager, MobCategory category, BlockPos pos) {
+        return WeightedRandomList.create();
+    }
+
+    @Override
+    public void createStructures(RegistryAccess registryAccess, ChunkGeneratorStructureState structureState, StructureManager structureManager, ChunkAccess chunk, StructureTemplateManager structureTemplateManager) {
+    }
+
+    @Override
+    public void createReferences(WorldGenLevel level, StructureManager structureManager, ChunkAccess chunk) {
+    }
+
+    @Override
+    public CompletableFuture<ChunkAccess> createBiomes(RandomState randomState, Blender blender, StructureManager structureManager, ChunkAccess chunk) {
+        return parent.getChunkSource().getChunkFuture(chunk.getPos().x, chunk.getPos().z, ChunkStatus.BIOMES, true).thenApply((pChunkR) -> {
+            pChunkR.ifSuccess((pChunk) -> {
+                chunk.fillBiomesFromNoise((x,y,z,s) -> pChunk.getNoiseBiome(x,y,z), null);
+            });
+            return chunk;
+        });
+    }
 
     @Override
     public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> structureSetLookup, RandomState randomState, long seed) {
