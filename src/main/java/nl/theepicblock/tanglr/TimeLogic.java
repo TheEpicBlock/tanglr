@@ -41,6 +41,7 @@ public class TimeLogic {
             // TODO not all changes should be significant enough
             onBlockSignificantChange(level, location);
         }
+        unDepend(level, location);
     }
 
     @SubscribeEvent
@@ -128,5 +129,20 @@ public class TimeLogic {
         dependencyInfo.hasDependencies = true;
         if (dependencyInfo.dependentBlocks == null) dependencyInfo.dependentBlocks = new LongArrayList();
         dependencyInfo.dependentBlocks.add(infoHolder.getOrCreateInfoId(level, dependantPos));
+    }
+
+    public static void unDepend(Level level, BlockPos pos) {
+        if (level.isClientSide()) return;
+        var levelExt = (LevelExtension)level;
+        var depId = levelExt.tanglr$getDependencyId(pos);
+        if (depId == null) return;
+        var selfId = levelExt.tanglr$getInfoId(pos);
+        var infoHolder = PositionInfoHolder.get(level.getServer());
+        levelExt.tanglr$setDependencyId(pos, null);
+        var depList = infoHolder.lookup(depId).dependentBlocks;
+        if (depList != null) {
+            // Shouldn't be null
+            depList.removeLong(depList.indexOf((long)selfId));
+        }
     }
 }
