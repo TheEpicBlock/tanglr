@@ -1,10 +1,12 @@
 package nl.theepicblock.tanglr;
 
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -58,7 +60,7 @@ public class TimeLogic {
         if (server != null) {
             var infoHolder = PositionInfoHolder.get(server);
             var info = infoHolder.lookup(id);
-            if (info.generation != comp.generation()) {
+            if (info == null || info.generation != comp.generation()) {
                 return false;
             }
         }
@@ -110,5 +112,19 @@ public class TimeLogic {
                 positionInfo.dependentBlocks.clear();
             }
         }
+    }
+
+    /**
+     * Make a block pos depend on something
+     */
+    public static void setDependency(long dependency, Level level, BlockPos dependantPos) {
+        if (level.isClientSide()) return;
+        var levelExt = (LevelExtension)level;
+        levelExt.tanglr$setDependencyId(dependantPos, dependency);
+        var infoHolder = PositionInfoHolder.get(level.getServer());
+        var dependencyInfo = infoHolder.lookup(dependency);
+        dependencyInfo.hasDependencies = true;
+        if (dependencyInfo.dependentBlocks == null) dependencyInfo.dependentBlocks = new LongArrayList();
+        dependencyInfo.dependentBlocks.add(infoHolder.getOrCreateInfoId(level, dependantPos));
     }
 }

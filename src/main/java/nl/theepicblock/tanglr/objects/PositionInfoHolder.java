@@ -20,6 +20,7 @@ public class PositionInfoHolder extends SavedData {
     }
 
     public BlockPositionInfo lookup(long id) {
+        if (id >= infos.size()) return null;
         return infos.get((int)id);
     }
 

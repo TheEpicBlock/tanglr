@@ -10,6 +10,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockPositionInfo {
     public BlockPos position;
@@ -17,7 +18,7 @@ public class BlockPositionInfo {
     public long generation;
     public boolean hasDependencies;
 //    public long dependency;
-    public LongList dependentBlocks;
+    public @Nullable LongList dependentBlocks;
 
     public static BlockPositionInfo fromNbt(CompoundTag tag, HolderLookup.Provider levelRegistry) {
         BlockPositionInfo info = new BlockPositionInfo();
