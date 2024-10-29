@@ -39,4 +39,16 @@ public class LevelManager {
         var futureKey = toFuture(present.dimension());
         return present.getServer().getLevel(futureKey);
     }
+
+    public static ResourceKey<Level> toPresent(ResourceKey<Level> future) {
+        var futureName = future.location().getPath();
+        var split = futureName.split("(?<!_)_", 2);
+        var presentName = ResourceLocation.fromNamespaceAndPath(split[0], split[1]);
+        return ResourceKey.create(future.registryKey(), presentName);
+    }
+
+    public static ServerLevel toPresent(ServerLevel future) {
+        var presentKey = toPresent(future.dimension());
+        return future.getServer().getLevel(presentKey);
+    }
 }

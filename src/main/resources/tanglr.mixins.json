@@ -6,6 +6,7 @@
     "MinecraftServerMixin",
     "ServerChunkCacheMixin",
     "ServerLevelAccessor",
+    "ServerLevelMixin",
     "SetBlockStateMixin"
   ],
   "injectors": {
