@@ -3,6 +3,7 @@ package nl.theepicblock.tanglr.objects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 public record ItemDependencyComponent(long dependency, long generation) {
@@ -12,12 +13,9 @@ public record ItemDependencyComponent(long dependency, long generation) {
                     Codec.LONG.fieldOf("generation").forGetter(ItemDependencyComponent::generation)
             ).apply(instance, ItemDependencyComponent::new)
     );
-    public static final StreamCodec<ByteBuf, ItemDependencyComponent> STREAM_CODEC = new StreamCodec<>() {
-        public ItemDependencyComponent decode(ByteBuf buf) {
-            return new ItemDependencyComponent(-1, -1);
-        }
-
-        public void encode(ByteBuf buf, ItemDependencyComponent comp) {
-        }
-    };
+    public static final StreamCodec<ByteBuf, ItemDependencyComponent> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_LONG, ItemDependencyComponent::dependency,
+            ByteBufCodecs.VAR_LONG, ItemDependencyComponent::generation,
+            ItemDependencyComponent::new
+    );
 }
