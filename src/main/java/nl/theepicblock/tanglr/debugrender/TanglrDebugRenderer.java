@@ -72,6 +72,9 @@ public class TanglrDebugRenderer {
                     renderLine(poseStack, bufferSource, srcPos, di.position, 0.1f, infoStartC, infoEndC);
                 }
             }
+            if (!isWrong) {
+                renderFloatingText(poseStack, bufferSource, srcPos, "Gen "+info.generation);
+            }
         });
         ext.tanglr$getInternalDependency().forEach((srcPos, depId) -> {
             var startC = FastColor.ARGB32.color(255, 0, 0, 255);
