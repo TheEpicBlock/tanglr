@@ -3,6 +3,7 @@
   "package": "nl.theepicblock.tanglr.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "InventoryTickMixin",
     "MinecraftServerMixin",
     "ServerChunkCacheMixin",
     "ServerLevelAccessor",

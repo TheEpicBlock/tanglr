@@ -2,7 +2,9 @@ package nl.theepicblock.tanglr;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,22 +51,18 @@ public class TimeLogic {
         }
     }
 
-    @SubscribeEvent
-    public static void onItemToss(ItemTossEvent e) {
-        var item = e.getEntity().getItem();
-        var comp = item.get(Tanglr.DEPENDENCY_COMPONENT.get());
-        if (comp != null) {
-            var id = comp.dependency();
-            if (e.getPlayer().getServer() != null) {
-                var infoHolder = PositionInfoHolder.get(e.getPlayer().getServer());
-                var info = infoHolder.lookup(id);
-                if (info.generation == comp.generation()) {
-                    e.getPlayer().sendSystemMessage(Component.literal("This item is still valid"));
-                } else {
-                    e.getPlayer().sendSystemMessage(Component.literal("This item is not valid"));
-                }
+    public static boolean isStackValid(ItemStack stack, @Nullable MinecraftServer server) {
+        var comp = stack.get(Tanglr.DEPENDENCY_COMPONENT.get());
+        if (comp == null) return true;
+        var id = comp.dependency();
+        if (server != null) {
+            var infoHolder = PositionInfoHolder.get(server);
+            var info = infoHolder.lookup(id);
+            if (info.generation != comp.generation()) {
+                return false;
             }
         }
+        return true;
     }
 
     public static @Nullable ItemDependencyComponent getDependencyForItemDrop(ServerLevel level, BlockPos location) {

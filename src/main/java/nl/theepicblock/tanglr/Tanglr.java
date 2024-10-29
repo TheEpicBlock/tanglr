@@ -68,6 +68,7 @@ public class Tanglr {
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         NeoForge.EVENT_BUS.register(TimeLogic.class);
+        NeoForge.EVENT_BUS.register(ItemEvents.class);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
