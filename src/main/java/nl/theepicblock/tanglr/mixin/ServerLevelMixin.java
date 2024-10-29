@@ -32,4 +32,14 @@ public class ServerLevelMixin implements LevelExtension {
     public void tanglr$setDependencyId(BlockPos pos, long id) {
         this.depIds.put(pos, id);
     }
+
+    @Override
+    public HashMap<BlockPos,Long> tanglr$getInternalInfo() {
+        return this.infoIds;
+    }
+
+    @Override
+    public HashMap<BlockPos,Long> tanglr$getInternalDependency() {
+        return this.depIds;
+    }
 }
