@@ -9,10 +9,34 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
+import nl.theepicblock.tanglr.objects.ItemDependencyComponent;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 public class ItemEvents {
+    @SubscribeEvent
+    public static void onItemCrafted(PlayerEvent.ItemCraftedEvent e) {
+        ItemDependencyComponent component = null;
+        var inv = e.getInventory();
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            var stack = inv.getItem(i);
+            var comp = stack.get(Tanglr.DEPENDENCY_COMPONENT.get());
+            if (comp != null) {
+                // TODO handle crafting with multiple dependencies
+                component = comp;
+            }
+        }
+
+        if (component != null) {
+            e.getCrafting().set(Tanglr.DEPENDENCY_COMPONENT.get(), component);
+        }
+    }
+
+    // TODO track smelting
+
+    // Following events prevent players from using items that don't exist anymore
+
     public static void onInventoryTick(ItemStack stack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, CallbackInfo ci) {
         if (entity instanceof ServerPlayer pl && !TimeLogic.isStackValid(stack, level.getServer())) {
             if (pl.getInventory().getItem(inventorySlot) == stack) {
