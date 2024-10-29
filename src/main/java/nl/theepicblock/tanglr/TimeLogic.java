@@ -108,9 +108,11 @@ public class TimeLogic {
                 for (long dependant : positionInfo.dependentBlocks) {
                     var dependantInfo = infoHolder.lookup(dependant);
                     dependantInfo.level.setBlock(dependantInfo.position, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+                    ((LevelExtension)dependantInfo.level).tanglr$setDependencyId(dependantInfo.position, null);
                 }
                 positionInfo.dependentBlocks.clear();
             }
+            positionInfo.hasDependencies = false;
         }
     }
 

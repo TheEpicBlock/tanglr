@@ -17,7 +17,7 @@ public interface LevelExtension {
      */
     Long tanglr$getDependencyId(BlockPos pos);
 
-    void tanglr$setDependencyId(BlockPos pos, long id);
+    void tanglr$setDependencyId(BlockPos pos, Long id);
 
 
     // DEBUG ONLY

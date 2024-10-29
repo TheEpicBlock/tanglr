@@ -29,8 +29,12 @@ public class ServerLevelMixin implements LevelExtension {
     }
 
     @Override
-    public void tanglr$setDependencyId(BlockPos pos, long id) {
-        this.depIds.put(pos, id);
+    public void tanglr$setDependencyId(BlockPos pos, Long id) {
+        if (id == null) {
+            this.depIds.remove(pos);
+        } else {
+            this.depIds.put(pos, id);
+        }
     }
 
     @Override
