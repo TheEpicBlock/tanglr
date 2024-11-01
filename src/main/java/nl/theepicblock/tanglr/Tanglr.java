@@ -4,6 +4,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -36,7 +37,7 @@ public class Tanglr {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     // deferred objects
-    public static final DeferredItem<ClockItem> CLOCK_ITEM = ITEMS.registerItem("clock", ClockItem::new, new Item.Properties());
+    public static final DeferredItem<ClockItem> CLOCK_ITEM = ITEMS.registerItem("clock", ClockItem::new, new Item.Properties().rarity(Rarity.RARE));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemDependencyComponent>> DEPENDENCY_COMPONENT = DATA_COMPONENTS.registerComponentType(
             "basic",
             builder -> builder
