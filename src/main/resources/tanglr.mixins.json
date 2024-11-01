@@ -9,7 +9,9 @@
     "ServerChunkCacheMixin",
     "ServerLevelAccessor",
     "ServerLevelMixin",
-    "SetBlockStateMixin"
+    "SetBlockStateMixin",
+    "piston.MixinPistonBlockEntity",
+    "piston.MixinPistonMove"
   ],
   "injectors": {
     "defaultRequire": 1
