@@ -17,6 +17,7 @@ import nl.theepicblock.tanglr.TimeLogic;
 import nl.theepicblock.tanglr.level.FutureServerLevel;
 import nl.theepicblock.tanglr.level.LevelExtension;
 import nl.theepicblock.tanglr.level.LevelManager;
+import nl.theepicblock.tanglr.objects.PositionInfoHolder;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED;
 
@@ -65,9 +66,13 @@ public class TimeMoverBlock extends DirectionalBlock {
             var present = LevelManager.toPresent(level);
             if (present.getBlockState(pos).isAir()) {
                 var stateToMove = level.getBlockState(pos);
+                if (stateToMove.isAir()) return;
                 present.setBlock(pos, stateToMove, Block.UPDATE_ALL);
                 var futureExt = (LevelExtension)level;
                 var dep = futureExt.tanglr$getDependencyId(pos);
+                if (dep == null || dep == TimeLogic.NOT_DEPENDENT) {
+                    return;
+                }
                 TimeLogic.unDepend(level, pos);
                 TimeLogic.setDependency(dep, present, pos);
                 // The future block now implicitly depends on the block in the past

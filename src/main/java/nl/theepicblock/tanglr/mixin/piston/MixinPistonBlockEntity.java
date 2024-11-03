@@ -42,7 +42,7 @@ public abstract class MixinPistonBlockEntity extends BlockEntity implements Pist
             var server = me.level.getServer();
             if (server == null) return;
             var holder = PositionInfoHolder.get(server);
-            if (holder.lookup(me.dependency).generation != me.generation) {
+            if (me.dependency != TimeLogic.NOT_DEPENDENT && holder.lookup(me.dependency).generation != me.generation) {
                 me.level.setBlock(me.worldPosition, Blocks.AIR.defaultBlockState(), 3);
                 me.movedState = Blocks.AIR.defaultBlockState();
             } else {
