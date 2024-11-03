@@ -13,6 +13,10 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import nl.theepicblock.tanglr.TimeLogic;
+import nl.theepicblock.tanglr.level.FutureServerLevel;
+import nl.theepicblock.tanglr.level.LevelExtension;
+import nl.theepicblock.tanglr.level.LevelManager;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED;
 
@@ -40,7 +44,9 @@ public class TimeMoverBlock extends DirectionalBlock {
                 if (flag) {
                     level.scheduleTick(pos, this, 2);
                 } else {
-                    timeMove(pos.relative(state.getValue(FACING)));
+                    if (level instanceof ServerLevel sl) {
+                        timeMove(pos.relative(state.getValue(FACING)), sl);
+                    }
                     level.setBlock(pos, state.cycle(POWERED), 2);
                 }
             }
@@ -54,8 +60,21 @@ public class TimeMoverBlock extends DirectionalBlock {
         }
     }
 
-    protected void timeMove(BlockPos pos) {
-        System.out.println("Time moving "+pos);
+    protected void timeMove(BlockPos pos, ServerLevel level) {
+        if (level instanceof FutureServerLevel) {
+            var present = LevelManager.toPresent(level);
+            if (present.getBlockState(pos).isAir()) {
+                var stateToMove = level.getBlockState(pos);
+                present.setBlock(pos, stateToMove, Block.UPDATE_ALL);
+                var futureExt = (LevelExtension)level;
+                var dep = futureExt.tanglr$getDependencyId(pos);
+                TimeLogic.unDepend(level, pos);
+                TimeLogic.setDependency(dep, present, pos);
+                // The future block now implicitly depends on the block in the past
+            }
+        } else {
+            // TODO
+        }
     }
 
 
