@@ -2,19 +2,22 @@ package nl.theepicblock.tanglr;
 
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.RepeaterBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
+import nl.theepicblock.tanglr.block.DelayedRepeaterBlock;
 import nl.theepicblock.tanglr.objects.ItemDependencyComponent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -38,6 +41,8 @@ public class Tanglr {
 
     // deferred objects
     public static final DeferredItem<ClockItem> CLOCK_ITEM = ITEMS.registerItem("clock", ClockItem::new, new Item.Properties().rarity(Rarity.RARE));
+    public static final DeferredBlock<DelayedRepeaterBlock> DELAYED_REPEATER = BLOCKS.registerBlock("delayed_repeater", DelayedRepeaterBlock::new, BlockBehaviour.Properties.of().instabreak().sound(SoundType.STONE).pushReaction(PushReaction.DESTROY));
+    public static final DeferredItem<BlockItem> DELAYED_REPEATER_ITEM = ITEMS.registerSimpleBlockItem(DELAYED_REPEATER);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemDependencyComponent>> DEPENDENCY_COMPONENT = DATA_COMPONENTS.registerComponentType(
             "basic",
             builder -> builder
@@ -54,6 +59,7 @@ public class Tanglr {
             .displayItems((parameters, output) -> {
                 // For your own tabs, this method is preferred over the event
                 output.accept(CLOCK_ITEM.get());
+                output.accept(DELAYED_REPEATER_ITEM.get());
             }).build());
 
     public Tanglr(IEventBus modEventBus, ModContainer modContainer) {
