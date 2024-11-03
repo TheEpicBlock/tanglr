@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,powered=false": {
+      "model": "tanglr:block/delayed_repeater",
+      "y": 270
+    },
+    "facing=east,powered=true": {
+      "model": "tanglr:block/delayed_repeater_on",
+      "y": 270
+    },
+    "facing=north,powered=false": {
+      "model": "tanglr:block/delayed_repeater",
+      "y": 180
+    },
+    "facing=north,powered=true": {
+      "model": "tanglr:block/delayed_repeater_on",
+      "y": 180
+    },
+    "facing=south,powered=false": {
+      "model": "tanglr:block/delayed_repeater"
+    },
+    "facing=south,powered=true": {
+      "model": "tanglr:block/delayed_repeater_on"
+    },
+    "facing=west,powered=false": {
+      "model": "tanglr:block/delayed_repeater",
+      "y": 90
+    },
+    "facing=west,powered=true": {
+      "model": "tanglr:block/delayed_repeater_on",
+      "y": 90
+    }
+  }
+}

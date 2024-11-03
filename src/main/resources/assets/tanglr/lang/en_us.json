@@ -1,4 +1,5 @@
 {
   "itemGroup.tanglr": "Tanglr Items",
-  "item.tanglr.clock": "Time Tanglr Clock"
+  "item.tanglr.clock": "Time Tanglr Clock",
+  "block.tanglr.delayed_repeater": "Delayed repeater"
 }

@@ -1,0 +1,7 @@
+{
+  "render_type": "minecraft:cutout",
+  "parent": "block/repeater_4tick",
+  "textures": {
+    "top": "tanglr:block/delayed_repeater"
+  }
+}
