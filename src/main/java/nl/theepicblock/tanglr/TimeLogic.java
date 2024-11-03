@@ -32,23 +32,21 @@ public class TimeLogic {
             // since by definition, the future refers to a location far ahead of anything else.
             // There cannot be a dependency on anything in there, since the dependent would have to be further in
             // the future than the future.
-
-            // having said that, we do want to remove any NOT_DEPENDENT's if the block is broken
-            if (newState.isAir()) {
-                var ext = (LevelExtension)futureLevel;
-                var depId = ext.tanglr$getDependencyId(location);
-                if (depId != null && depId == NOT_DEPENDENT) {
-                    ext.tanglr$setDependencyId(location, null);
-                }
-            }
             return;
         } else {
             var futureLevel = LevelManager.toFuture(level);
             var futureExt = (LevelExtension)futureLevel;
-            if (futureExt.tanglr$getDependencyId(location) == null) {
+            var depId = futureExt.tanglr$getDependencyId(location);
+            if (depId == null) {
                 // This position implicitly depends on the block that was just changed,
                 // so we'll replicate the change
                 futureLevel.setBlock(location, newState, Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+            } else if (depId == NOT_DEPENDENT) {
+                // Kinda a hack, but we'll ignore not_dependents if the other side is air
+                if (futureLevel.getBlockState(location).isAir()) {
+                    futureLevel.setBlock(location, newState, Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+                    futureExt.tanglr$setDependencyId(location, null);
+                }
             }
             // TODO not all changes should be significant enough
             onBlockSignificantChange(level, location);
