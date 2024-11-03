@@ -19,6 +19,7 @@ import nl.theepicblock.tanglr.objects.PositionInfoHolder;
 import org.jetbrains.annotations.Nullable;
 
 public class TimeLogic {
+    public static long NOT_DEPENDENT = -1L;
     /**
      * @param level The level where the block change occurred
      * @param location the block position that was changed
@@ -31,11 +32,24 @@ public class TimeLogic {
             // since by definition, the future refers to a location far ahead of anything else.
             // There cannot be a dependency on anything in there, since the dependent would have to be further in
             // the future than the future.
+
+            // having said that, we do want to remove any NOT_DEPENDENT's if the block is broken
+            if (newState.isAir()) {
+                var ext = (LevelExtension)futureLevel;
+                var depId = ext.tanglr$getDependencyId(location);
+                if (depId != null && depId == NOT_DEPENDENT) {
+                    ext.tanglr$setDependencyId(location, null);
+                }
+            }
             return;
         } else {
-            // Replicate the change in the future
             var futureLevel = LevelManager.toFuture(level);
-            futureLevel.setBlock(location, newState, Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+            var futureExt = (LevelExtension)futureLevel;
+            if (futureExt.tanglr$getDependencyId(location) == null) {
+                // This position implicitly depends on the block that was just changed,
+                // so we'll replicate the change
+                futureLevel.setBlock(location, newState, Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+            }
             // TODO not all changes should be significant enough
             onBlockSignificantChange(level, location);
         }
@@ -74,6 +88,9 @@ public class TimeLogic {
                 // We presume it depends on the block in the same location in the present
                 var present = LevelManager.toPresent(futureLevel);
                 id = infoHolder.getOrCreateInfoId(present, location);
+            }
+            if (id == NOT_DEPENDENT) {
+                return null;
             }
             var info = infoHolder.lookup(id);
             info.hasDependencies = true;

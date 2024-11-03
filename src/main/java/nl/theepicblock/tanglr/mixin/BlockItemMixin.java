@@ -5,10 +5,14 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import nl.theepicblock.tanglr.Tanglr;
 import nl.theepicblock.tanglr.TimeLogic;
+import nl.theepicblock.tanglr.level.FutureServerLevel;
+import nl.theepicblock.tanglr.level.LevelExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import static nl.theepicblock.tanglr.TimeLogic.NOT_DEPENDENT;
 
 @Mixin(BlockItem.class)
 public class BlockItemMixin {
@@ -18,6 +22,11 @@ public class BlockItemMixin {
         var comp = stack.get(Tanglr.DEPENDENCY_COMPONENT.get());
         if (comp != null) {
             TimeLogic.setDependency(comp.dependency(), context.getLevel(), context.getClickedPos());
+        } else {
+            if (context.getLevel() instanceof FutureServerLevel) {
+                // In the future we have to explicitly undeclare dependencies
+                ((LevelExtension)context.getLevel()).tanglr$setDependencyId(context.getClickedPos(), NOT_DEPENDENT);
+            }
         }
     }
 }

@@ -18,6 +18,8 @@ import org.joml.Vector3d;
 
 import java.util.Objects;
 
+import static nl.theepicblock.tanglr.TimeLogic.NOT_DEPENDENT;
+
 /**
  * This thing is terrible and only works in singleplayer
  */
@@ -77,10 +79,22 @@ public class TanglrDebugRenderer {
             }
         });
         ext.tanglr$getInternalDependency().forEach((srcPos, depId) -> {
-            var startC = FastColor.ARGB32.color(255, 0, 0, 255);
-            var endC = FastColor.ARGB32.color(255, 255, 255, 255);
-            var di = infoHolder.lookup(depId);
-            renderLine(poseStack, bufferSource, srcPos, di.position, -0.1f, startC, endC);
+            if (depId == NOT_DEPENDENT) {
+                renderFilledUnitCube(
+                        poseStack,
+                        bufferSource,
+                        srcPos,
+                        0,
+                        1,
+                        0,
+                        0.2f
+                );
+            } else {
+                var startC = FastColor.ARGB32.color(255, 0, 0, 255);
+                var endC = FastColor.ARGB32.color(255, 255, 255, 255);
+                var di = infoHolder.lookup(depId);
+                renderLine(poseStack, bufferSource, srcPos, di.position, -0.1f, startC, endC);
+            }
         });
     }
 
