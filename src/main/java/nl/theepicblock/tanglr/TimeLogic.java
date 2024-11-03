@@ -2,7 +2,6 @@ package nl.theepicblock.tanglr;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -11,7 +10,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import nl.theepicblock.tanglr.level.FutureServerLevel;
 import nl.theepicblock.tanglr.level.LevelManager;
@@ -109,7 +107,6 @@ public class TimeLogic {
                 for (long dependant : positionInfo.dependentBlocks) {
                     var dependantInfo = infoHolder.lookup(dependant);
                     dependantInfo.level.setBlock(dependantInfo.position, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
-                    ((LevelExtension)dependantInfo.level).tanglr$setDependencyId(dependantInfo.position, null);
                 }
                 positionInfo.dependentBlocks.clear();
             }
