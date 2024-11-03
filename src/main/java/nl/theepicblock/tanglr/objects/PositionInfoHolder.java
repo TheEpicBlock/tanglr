@@ -53,7 +53,9 @@ public class PositionInfoHolder extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        compoundTag.put("infos", new ListTag());
+        var l = new ListTag();
+        this.infos.forEach(i -> l.add(i.toNbt()));
+        compoundTag.put("infos", l);
         return compoundTag;
     }
 

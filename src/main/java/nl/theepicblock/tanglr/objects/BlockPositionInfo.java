@@ -26,7 +26,24 @@ public class BlockPositionInfo {
         info.level = levelRegistry.lookup(Registries.DIMENSION).orElseThrow().get(ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(tag.getString("dimension")))).orElseThrow().value();
         info.generation = tag.getLong("generation");
         info.hasDependencies = tag.getBoolean("dependencies");
-        info.dependentBlocks = new LongArrayList(tag.getLongArray("dependentBlocks"));
+        var arr = tag.getLongArray("dependentBlocks");
+        if (arr.length != 0) {
+            info.dependentBlocks = new LongArrayList(arr);
+        }
         return info;
+    }
+
+    public CompoundTag toNbt() {
+        var tag = new CompoundTag();
+        tag.put("position", NbtUtils.writeBlockPos(this.position));
+        tag.putString("dimension", this.level.dimension().location().toString());
+        tag.putLong("generation", this.generation);
+        tag.putBoolean("dependencies", this.hasDependencies);
+        if (this.dependentBlocks == null) {
+            tag.putLongArray("dependentBlocks", new long[0]);
+        } else {
+            tag.putLongArray("dependentBlocks", this.dependentBlocks.toLongArray());
+        }
+        return tag;
     }
 }
