@@ -1,32 +1,32 @@
 {
   "variants": {
-    "facing=east,powered=false": {
+    "facing=east,outputting=false": {
       "model": "tanglr:block/delayed_repeater",
       "y": 270
     },
-    "facing=east,powered=true": {
+    "facing=east,outputting=true": {
       "model": "tanglr:block/delayed_repeater_on",
       "y": 270
     },
-    "facing=north,powered=false": {
+    "facing=north,outputting=false": {
       "model": "tanglr:block/delayed_repeater",
       "y": 180
     },
-    "facing=north,powered=true": {
+    "facing=north,outputting=true": {
       "model": "tanglr:block/delayed_repeater_on",
       "y": 180
     },
-    "facing=south,powered=false": {
+    "facing=south,outputting=false": {
       "model": "tanglr:block/delayed_repeater"
     },
-    "facing=south,powered=true": {
+    "facing=south,outputting=true": {
       "model": "tanglr:block/delayed_repeater_on"
     },
-    "facing=west,powered=false": {
+    "facing=west,outputting=false": {
       "model": "tanglr:block/delayed_repeater",
       "y": 90
     },
-    "facing=west,powered=true": {
+    "facing=west,outputting=true": {
       "model": "tanglr:block/delayed_repeater_on",
       "y": 90
     }

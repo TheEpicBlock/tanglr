@@ -5,19 +5,26 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DiodeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.ticks.TickPriority;
 import nl.theepicblock.tanglr.level.FutureServerLevel;
 import nl.theepicblock.tanglr.level.LevelManager;
 
 public class DelayedRepeaterBlock extends DiodeBlock {
+    public static final BooleanProperty OUTPUTTING = BooleanProperty.create("outputting");
+
     public DelayedRepeaterBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(POWERED, false));
+        this.registerDefaultState(this.getStateDefinition().any()
+                        .setValue(FACING, Direction.NORTH)
+                        .setValue(POWERED, false)
+                        .setValue(OUTPUTTING, false));
     }
 
     @Override
@@ -30,35 +37,38 @@ public class DelayedRepeaterBlock extends DiodeBlock {
         return 0;
     }
 
-    @Override
-    protected boolean shouldTurnOn(Level level, BlockPos pos, BlockState state) {
-        return wouldFutureTurnOn(level, pos, state) && (level instanceof FutureServerLevel);
-    }
-
-    protected boolean wouldFutureTurnOn(Level level, BlockPos pos, BlockState state) {
-        return super.shouldTurnOn(level, pos, state);
-    }
-
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, POWERED);
+        builder.add(FACING, POWERED, OUTPUTTING);
     }
 
-    protected void onTickStuffs(Level level, BlockPos pos, BlockState state) {
-        if (!level.isClientSide && !(level instanceof FutureServerLevel) && this.wouldFutureTurnOn(level, pos, state)) {
-            var future = LevelManager.toFuture((ServerLevel)level);
-            future.scheduleTick(pos, this, this.getDelay(state), TickPriority.VERY_HIGH);
+    protected int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
+        if (!(Boolean)blockState.getValue(OUTPUTTING)) {
+            return 0;
+        } else {
+            return blockState.getValue(FACING) == side ? this.getOutputSignal(blockAccess, pos, blockState) : 0;
         }
     }
 
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        onTickStuffs(level, pos, state);
-        super.tick(state, level, pos, random);
-    }
-
-    @Override
-    protected void checkTickOnNeighbor(Level level, BlockPos pos, BlockState state) {
-        onTickStuffs(level, pos, state);
-        super.checkTickOnNeighbor(level, pos, state);
+        if (!this.isLocked(level, pos, state)) {
+            boolean alrPowered = state.getValue(POWERED);
+            boolean shouldPowered = this.shouldTurnOn(level, pos, state);
+            if (alrPowered && !shouldPowered) {
+                level.setBlock(pos, state.setValue(POWERED, false).setValue(OUTPUTTING, false), 2);
+            } else if (!alrPowered) {
+                level.setBlock(pos, state.setValue(POWERED, true).setValue(OUTPUTTING, false), 2);
+                if (!shouldPowered) {
+                    level.scheduleTick(pos, this, this.getDelay(state), TickPriority.VERY_HIGH);
+                }
+                if (!(level instanceof FutureServerLevel)) {
+                    var future = LevelManager.toFuture(level);
+                    future.setBlock(pos, state.setValue(POWERED, true).setValue(OUTPUTTING, true), 2);
+                    if (!shouldPowered) {
+                        future.scheduleTick(pos, this, this.getDelay(state), TickPriority.VERY_HIGH);
+                    }
+                }
+            }
+        }
     }
 }
