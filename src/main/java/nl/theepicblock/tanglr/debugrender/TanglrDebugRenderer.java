@@ -47,7 +47,7 @@ public class TanglrDebugRenderer {
                 renderFloatingText(poseStack, bufferSource, srcPos, "Wrong position");
                 isWrong = true;
             }
-            if (level != info.level) {
+            if (level != info.getLevel(level)) {
                 renderFloatingText(poseStack, bufferSource, srcPos, "Wrong level");
                 isWrong = true;
             }

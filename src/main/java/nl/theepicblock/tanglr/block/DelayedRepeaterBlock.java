@@ -4,8 +4,10 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DiodeBlock;
@@ -64,6 +66,7 @@ public class DelayedRepeaterBlock extends DiodeBlock {
                 if (!(level instanceof FutureServerLevel)) {
                     var future = LevelManager.toFuture(level);
                     future.setBlock(pos, state.setValue(POWERED, true).setValue(OUTPUTTING, true), 2);
+                    future.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(pos), 3, pos);
                     if (!shouldPowered) {
                         future.scheduleTick(pos, this, this.getDelay(state), TickPriority.VERY_HIGH);
                     }

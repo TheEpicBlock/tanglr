@@ -33,7 +33,7 @@ public class PositionInfoHolder extends SavedData {
         newInfo.position = pos;
         newInfo.hasDependencies = false;
         newInfo.generation = 0;
-        newInfo.level = level;
+        newInfo.level = level.dimension();
         this.infos.add(newInfo);
         ext.tanglr$setInfoId(pos, newId);
         return newId;

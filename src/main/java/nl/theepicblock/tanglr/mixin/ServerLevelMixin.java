@@ -42,6 +42,7 @@ public abstract class ServerLevelMixin implements LevelExtension {
     @Override
     public void tanglr$setInfoId(BlockPos pos, long id) {
         this.storage.infoIds.put(pos, id);
+        this.storage.setDirty();
     }
 
     @Override
@@ -56,6 +57,7 @@ public abstract class ServerLevelMixin implements LevelExtension {
         } else {
             this.storage.depIds.put(pos, id);
         }
+        this.storage.setDirty();
     }
 
     @Override

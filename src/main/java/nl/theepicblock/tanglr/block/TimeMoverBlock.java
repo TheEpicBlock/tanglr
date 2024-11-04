@@ -4,8 +4,10 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -73,6 +75,7 @@ public class TimeMoverBlock extends DirectionalBlock {
                 if (dep == null || dep == TimeLogic.NOT_DEPENDENT) {
                     return;
                 }
+                present.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(pos), 3, pos);
                 TimeLogic.unDepend(level, pos);
                 TimeLogic.setDependency(dep, present, pos);
                 // The future block now implicitly depends on the block in the past
