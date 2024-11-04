@@ -72,12 +72,14 @@ public class TimeMoverBlock extends DirectionalBlock {
                 present.setBlock(pos, stateToMove, Block.UPDATE_ALL);
                 var futureExt = (LevelExtension)level;
                 var dep = futureExt.tanglr$getDependencyId(pos);
-                if (dep == null || dep == TimeLogic.NOT_DEPENDENT) {
+                if (dep == null) {
                     return;
                 }
                 present.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(pos), 3, pos);
                 TimeLogic.unDepend(level, pos);
-                TimeLogic.setDependency(dep, present, pos);
+                if (dep != TimeLogic.NOT_DEPENDENT) {
+                    TimeLogic.setDependency(dep, present, pos);
+                }
                 // The future block now implicitly depends on the block in the past
             }
         } else {
