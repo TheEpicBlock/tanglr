@@ -12,7 +12,6 @@ import nl.theepicblock.tanglr.Tanglr;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -70,18 +69,28 @@ public record ItemDependencyComponent(List<ItemGroup> miniGroups) {
         return new ItemDependencyComponent(list);
     }
 
-    public ItemGroup popCandidate() {
+    public ItemGroup popSpecialCandidate() {
         ItemGroup selGroup = null;
         for (var group : this.miniGroups()) {
             if (group.dependencies().size() == 1) {
                 selGroup = group;
+                break;
             }
         }
         return selGroup;
     }
 
-    public Pair<ItemDependencyComponent, Dependency> popOne() {
-        var group = this.popCandidate();
+    public ItemGroup popCandidate() {
+        ItemGroup selGroup = null;
+        for (var group : this.miniGroups()) {
+            selGroup = group;
+            break;
+        }
+        return selGroup;
+    }
+
+    public Pair<ItemDependencyComponent, Dependency> popSpecialOne() {
+        var group = this.popSpecialCandidate();
         if (group == null) {
             return null;
         }
@@ -89,6 +98,18 @@ public record ItemDependencyComponent(List<ItemGroup> miniGroups) {
             return new Pair<>(this.withRemoved(Set.of(group)), group.dependencies().getFirst());
         } else {
             return new Pair<>(this.withReplaced(group, group.decrement(1)), group.dependencies().getFirst());
+        }
+    }
+
+    public Pair<ItemDependencyComponent, ItemGroup> popOne() {
+        var group = this.popCandidate();
+        if (group == null) {
+            return null;
+        }
+        if (group.count() == 1) {
+            return new Pair<>(this.withRemoved(Set.of(group)), group);
+        } else {
+            return new Pair<>(this.withReplaced(group, group.decrement(1)), group);
         }
     }
 

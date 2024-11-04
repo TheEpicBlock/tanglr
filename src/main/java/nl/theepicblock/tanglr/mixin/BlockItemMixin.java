@@ -21,7 +21,7 @@ public class BlockItemMixin {
         var stack = context.getItemInHand();
         var comp = stack.get(Tanglr.DEPENDENCY_COMPONENT.get());
         if (comp != null) {
-            var pop = comp.popOne();
+            var pop = comp.popSpecialOne();
             if (pop == null) return; // Uhhh, oh no
             var dep = pop.getSecond();
             TimeLogic.setDependency(dep.dependency(), context.getLevel(), context.getClickedPos());

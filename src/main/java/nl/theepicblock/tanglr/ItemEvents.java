@@ -13,29 +13,30 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import nl.theepicblock.tanglr.objects.ItemDependencyComponent;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemEvents {
     public static ItemStack onItemCrafted(ItemStack in, List<ItemStack> inputs) {
-        ItemDependencyComponent component = null;
+        List<ItemDependencyComponent.Dependency> deps = new ArrayList<>();
         for (var stack : inputs) {
             if (stack == null) {
                 continue;
             }
             var comp = stack.get(Tanglr.DEPENDENCY_COMPONENT.get());
             if (comp != null) {
-                // TODO handle crafting with multiple dependencies
-                component = comp;
+                var c = comp.popCandidate();
+                if (c != null) {
+                    deps.addAll(c.dependencies());
+                }
             }
         }
 
-        if (component != null) {
-            in.set(Tanglr.DEPENDENCY_COMPONENT.get(), component);
+        if (!deps.isEmpty()) {
+            in.set(Tanglr.DEPENDENCY_COMPONENT.get(), new ItemDependencyComponent(List.of(new ItemDependencyComponent.ItemGroup(deps, in.getCount()))));
         }
         return in;
     }
-
-    // TODO track smelting
 
     // Following events prevent players from using items that don't exist anymore
 
