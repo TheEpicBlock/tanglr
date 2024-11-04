@@ -31,7 +31,7 @@ public abstract class ServerLevelMixin implements LevelExtension {
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void onInit(MinecraftServer server, Executor dispatcher, LevelStorageSource.LevelStorageAccess levelStorageAccess, ServerLevelData serverLevelData, ResourceKey dimension, LevelStem levelStem, ChunkProgressListener progressListener, boolean isDebug, long biomeZoomSeed, List customSpawners, boolean tickTime, RandomSequences randomSequences, CallbackInfo ci) {
-        this.storage = this.getDataStorage().get(TimeDataStorage.factory(), "tanglr_world_attachment");
+        this.storage = this.getDataStorage().computeIfAbsent(TimeDataStorage.factory(), "tanglr_world_attachment");
     }
 
     @Override
