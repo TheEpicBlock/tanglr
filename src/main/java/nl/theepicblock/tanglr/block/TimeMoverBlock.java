@@ -19,7 +19,6 @@ import nl.theepicblock.tanglr.TimeLogic;
 import nl.theepicblock.tanglr.level.FutureServerLevel;
 import nl.theepicblock.tanglr.level.LevelExtension;
 import nl.theepicblock.tanglr.level.LevelManager;
-import nl.theepicblock.tanglr.objects.PositionInfoHolder;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED;
 

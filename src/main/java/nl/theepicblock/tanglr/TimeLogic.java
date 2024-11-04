@@ -12,9 +12,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import nl.theepicblock.tanglr.level.FutureServerLevel;
+import nl.theepicblock.tanglr.level.LevelExtension;
 import nl.theepicblock.tanglr.level.LevelManager;
 import nl.theepicblock.tanglr.objects.ItemDependencyComponent;
-import nl.theepicblock.tanglr.level.LevelExtension;
 import nl.theepicblock.tanglr.objects.PositionInfoHolder;
 import org.jetbrains.annotations.Nullable;
 
