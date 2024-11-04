@@ -9,10 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import nl.theepicblock.tanglr.TimeLogic;
@@ -65,8 +62,10 @@ public class TimeMoverBlock extends DirectionalBlock {
     protected void timeMove(BlockPos pos, ServerLevel level) {
         if (level instanceof FutureServerLevel) {
             var present = LevelManager.toPresent(level);
-            if (present.getBlockState(pos).isAir()) {
-                var stateToMove = level.getBlockState(pos);
+            var presentBlock = present.getBlockState(pos);
+            var stateToMove = level.getBlockState(pos);
+            var g = presentBlock.getBlock() == stateToMove.getBlock() && stateToMove.is(Blocks.REPEATER);
+            if (presentBlock.isAir() || g) {
                 if (stateToMove.isAir()) return;
                 present.setBlock(pos, stateToMove, Block.UPDATE_ALL);
                 var futureExt = (LevelExtension)level;
