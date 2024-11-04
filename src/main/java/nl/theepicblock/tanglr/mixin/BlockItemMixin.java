@@ -21,7 +21,11 @@ public class BlockItemMixin {
         var stack = context.getItemInHand();
         var comp = stack.get(Tanglr.DEPENDENCY_COMPONENT.get());
         if (comp != null) {
-            TimeLogic.setDependency(comp.dependency(), context.getLevel(), context.getClickedPos());
+            var pop = comp.popOne();
+            if (pop == null) return; // Uhhh, oh no
+            var dep = pop.getSecond();
+            TimeLogic.setDependency(dep.dependency(), context.getLevel(), context.getClickedPos());
+            stack.set(Tanglr.DEPENDENCY_COMPONENT.get(), pop.getFirst());
         } else {
             if (context.getLevel() instanceof FutureServerLevel) {
                 // In the future we have to explicitly undeclare dependencies

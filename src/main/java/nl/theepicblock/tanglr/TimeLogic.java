@@ -18,6 +18,8 @@ import nl.theepicblock.tanglr.objects.ItemDependencyComponent;
 import nl.theepicblock.tanglr.objects.PositionInfoHolder;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+
 public class TimeLogic {
     public static long NOT_DEPENDENT = -1L;
     /**
@@ -58,27 +60,51 @@ public class TimeLogic {
     public static void onBlockDrops(BlockDropsEvent e) {
         var level = e.getLevel();
         var pos = e.getPos();
-        var comp = getDependencyForItemDrop(level, pos);
-        if (comp != null) {
-            e.getDrops().forEach(drop -> drop.getItem().set(Tanglr.DEPENDENCY_COMPONENT.get(), comp));
+        var dep = getDependencyForItemDrop(level, pos);
+        if (dep != null) {
+            e.getDrops().forEach(drop -> ItemDependencyComponent.markAllDependent(drop.getItem(), dep));
         }
     }
 
-    public static boolean isStackValid(ItemStack stack, @Nullable MinecraftServer server) {
+    public static boolean decreaseOrTrueIfImplode(ItemStack stack, @Nullable MinecraftServer server) {
+        if (server == null) return true;
         var comp = stack.get(Tanglr.DEPENDENCY_COMPONENT.get());
         if (comp == null) return true;
-        var id = comp.dependency();
-        if (server != null) {
-            var infoHolder = PositionInfoHolder.get(server);
-            var info = infoHolder.lookup(id);
-            if (info == null || info.generation != comp.generation()) {
+        var toRemove = new HashSet<ItemDependencyComponent.ItemGroup>();
+        for (var group : comp.miniGroups()) {
+            if (!isValid(group, server)) {
+                toRemove.add(group);
+            }
+        }
+        var newComp = comp.withRemoved(toRemove);
+        stack.set(Tanglr.DEPENDENCY_COMPONENT.get(), newComp);
+        var c = 0;
+        for (var group : toRemove) {
+            c += group.count();
+        }
+        stack.setCount(stack.getCount() - c);
+        if (stack.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isValid(ItemDependencyComponent.ItemGroup group, MinecraftServer server) {
+        for (var dep : group.dependencies()) {
+            if (!isValid(dep, server)) {
                 return false;
             }
         }
         return true;
     }
 
-    public static @Nullable ItemDependencyComponent getDependencyForItemDrop(ServerLevel level, BlockPos location) {
+    private static boolean isValid(ItemDependencyComponent.Dependency dep, MinecraftServer server) {
+        var infoHolder = PositionInfoHolder.get(server);
+        var info = infoHolder.lookup(dep.dependency());
+        return info != null && info.generation == dep.generation();
+    }
+
+    public static @Nullable ItemDependencyComponent.Dependency getDependencyForItemDrop(ServerLevel level, BlockPos location) {
         if (level instanceof FutureServerLevel futureLevel) {
             var infoHolder = PositionInfoHolder.get(level.getServer());
             var id = ((LevelExtension)futureLevel).tanglr$getDependencyId(location);
@@ -93,7 +119,7 @@ public class TimeLogic {
             var info = infoHolder.lookup(id);
             info.hasDependencies = true;
             infoHolder.setDirty();
-            return new ItemDependencyComponent(id, info.generation);
+            return new ItemDependencyComponent.Dependency(id, info.generation);
         } else {
             var ext = (LevelExtension)level;
             var id = ext.tanglr$getDependencyId(location);
@@ -102,7 +128,7 @@ public class TimeLogic {
             var info = infoHolder.lookup(id);
             info.hasDependencies = true;
             infoHolder.setDirty();
-            return new ItemDependencyComponent(id, info.generation);
+            return new ItemDependencyComponent.Dependency(id, info.generation);
         }
     }
 

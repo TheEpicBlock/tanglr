@@ -40,7 +40,7 @@ public class ItemEvents {
     // Following events prevent players from using items that don't exist anymore
 
     public static void onInventoryTick(ItemStack stack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, CallbackInfo ci) {
-        if (entity instanceof ServerPlayer pl && !TimeLogic.isStackValid(stack, level.getServer())) {
+        if (entity instanceof ServerPlayer pl && !TimeLogic.decreaseOrTrueIfImplode(stack, level.getServer())) {
             if (pl.getInventory().getItem(inventorySlot) == stack) {
                 pl.getInventory().setItem(inventorySlot, ItemStack.EMPTY);
                 ci.cancel();
@@ -50,14 +50,14 @@ public class ItemEvents {
 
     @SubscribeEvent
     public static void onUse(LivingEntityUseItemEvent.Start e) {
-        if (!TimeLogic.isStackValid(e.getItem(), e.getEntity().getServer())) {
+        if (!TimeLogic.decreaseOrTrueIfImplode(e.getItem(), e.getEntity().getServer())) {
             e.setCanceled(true);
         }
     }
 
     @SubscribeEvent
     public static void onUseBlock(UseItemOnBlockEvent e) {
-        if (!TimeLogic.isStackValid(e.getItemStack(), e.getLevel().getServer())) {
+        if (!TimeLogic.decreaseOrTrueIfImplode(e.getItemStack(), e.getLevel().getServer())) {
             if (e.getPlayer() != null) {
                 if (e.getPlayer().getItemInHand(e.getHand()) == e.getItemStack()) {
                     e.getPlayer().setItemInHand(e.getHand(), ItemStack.EMPTY);
@@ -69,7 +69,7 @@ public class ItemEvents {
 
     @SubscribeEvent
     public static void itemPickup(ItemEntityPickupEvent.Pre e) {
-        if (!TimeLogic.isStackValid(e.getItemEntity().getItem(), e.getItemEntity().getServer())) {
+        if (!TimeLogic.decreaseOrTrueIfImplode(e.getItemEntity().getItem(), e.getItemEntity().getServer())) {
             e.getItemEntity().setItem(ItemStack.EMPTY);
             e.getItemEntity().discard();
             e.setCanPickup(TriState.FALSE);
