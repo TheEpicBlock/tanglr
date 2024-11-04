@@ -31,7 +31,7 @@ public class TimeLogic {
      * @param location the block position that was changed
      * @param newState the new state of the block
      */
-    public static void enqueueBlockChange(ServerLevel level, BlockPos location, BlockState newState) {
+    public static void enqueueBlockChange(ServerLevel level, BlockPos location, BlockState newState, BlockState originalState) {
         if (level instanceof FutureServerLevel futureLevel) {
             // Changing blocks in the future does not do anything
             // There cannot be a dependency on an object in the future dimension,
@@ -40,6 +40,9 @@ public class TimeLogic {
             // the future than the future.
             return;
         } else {
+            if (isInsignificant(originalState, newState)) {
+                return;
+            }
             var futureLevel = LevelManager.toFuture(level);
             var futureExt = (LevelExtension)futureLevel;
             var depId = futureExt.tanglr$getDependencyId(location);
@@ -54,10 +57,16 @@ public class TimeLogic {
                     futureExt.tanglr$setDependencyId(location, null);
                 }
             }
-            // TODO not all changes should be significant enough
             onBlockSignificantChange(level, location);
         }
         unDepend(level, location);
+    }
+
+    public static boolean isInsignificant(BlockState from, BlockState to) {
+        if (from.trySetValue(BlockStateProperties.POWERED, false) == to.trySetValue(BlockStateProperties.POWERED, false)) {
+            return true;
+        }
+        return false;
     }
 
     public static BlockState getFutureState(BlockState in) {
