@@ -34,68 +34,72 @@ public class TanglrDebugRenderer {
     }
 
     public static void render(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, double camX, double camY, double camZ) {
-        if (!isEnabled()) return;
-        if (level == null) return;
+        try {
+            if (!isEnabled()) return;
+            if (level == null) return;
 
-        var ext = (LevelExtension)level;
-        var infoHolder = PositionInfoHolder.get(level.getServer());
-        ext.tanglr$getInternalInfo().forEach((srcPos, infoId) -> {
-            var info = infoHolder.lookup(infoId);
+            var ext = (LevelExtension)level;
+            var infoHolder = PositionInfoHolder.get(level.getServer());
+            ext.tanglr$getInternalInfo().forEach((srcPos, infoId) -> {
+                var info = infoHolder.lookup(infoId);
 
-            boolean isWrong = false;
-            if (!Objects.equals(srcPos, info.position)) {
-                renderFloatingText(poseStack, bufferSource, srcPos, "Wrong position");
-                isWrong = true;
-            }
-            if (level != info.getLevel(level)) {
-                renderFloatingText(poseStack, bufferSource, srcPos, "Wrong level");
-                isWrong = true;
-            }
-            var hasBlockDeps = info.dependentBlocks != null && !info.dependentBlocks.isEmpty();
-            if (!info.hasDependencies && hasBlockDeps) {
-                renderFloatingText(poseStack, bufferSource, srcPos, "Deps listed but marked as no deps");
-                isWrong = true;
-            }
-            renderFilledUnitCube(
-                    poseStack,
-                    bufferSource,
-                    srcPos,
-                    isWrong ? 0 : 1,
-                    info.hasDependencies ? 0 : 1,
-                    hasBlockDeps ? 0 : 1,
-                    0.2f
-            );
-
-            var infoStartC = FastColor.ARGB32.color(255, 255, 0, 0);
-            var infoEndC = FastColor.ARGB32.color(255, 255, 255, 255);
-            if (hasBlockDeps) {
-                for (var dL : info.dependentBlocks) {
-                    var di = infoHolder.lookup(dL);
-                    renderLine(poseStack, bufferSource, srcPos, di.position, 0.1f, infoStartC, infoEndC);
+                boolean isWrong = false;
+                if (!Objects.equals(srcPos, info.position)) {
+                    renderFloatingText(poseStack, bufferSource, srcPos, "Wrong position");
+                    isWrong = true;
                 }
-            }
-            if (!isWrong) {
-                renderFloatingText(poseStack, bufferSource, srcPos, "Gen "+info.generation);
-            }
-        });
-        ext.tanglr$getInternalDependency().forEach((srcPos, depId) -> {
-            if (depId == NOT_DEPENDENT) {
+                if (level != info.getLevel(level)) {
+                    renderFloatingText(poseStack, bufferSource, srcPos, "Wrong level");
+                    isWrong = true;
+                }
+                var hasBlockDeps = info.dependentBlocks != null && !info.dependentBlocks.isEmpty();
+                if (!info.hasDependencies && hasBlockDeps) {
+                    renderFloatingText(poseStack, bufferSource, srcPos, "Deps listed but marked as no deps");
+                    isWrong = true;
+                }
                 renderFilledUnitCube(
                         poseStack,
                         bufferSource,
                         srcPos,
-                        0,
-                        1,
-                        0,
+                        isWrong ? 0 : 1,
+                        info.hasDependencies ? 0 : 1,
+                        hasBlockDeps ? 0 : 1,
                         0.2f
                 );
-            } else {
-                var startC = FastColor.ARGB32.color(255, 0, 0, 255);
-                var endC = FastColor.ARGB32.color(255, 255, 255, 255);
-                var di = infoHolder.lookup(depId);
-                renderLine(poseStack, bufferSource, srcPos, di.position, -0.1f, startC, endC);
-            }
-        });
+
+                var infoStartC = FastColor.ARGB32.color(255, 255, 0, 0);
+                var infoEndC = FastColor.ARGB32.color(255, 255, 255, 255);
+                if (hasBlockDeps) {
+                    for (var dL : info.dependentBlocks) {
+                        var di = infoHolder.lookup(dL);
+                        renderLine(poseStack, bufferSource, srcPos, di.position, 0.1f, infoStartC, infoEndC);
+                    }
+                }
+                if (!isWrong) {
+                    renderFloatingText(poseStack, bufferSource, srcPos, "Gen " + info.generation);
+                }
+            });
+            ext.tanglr$getInternalDependency().forEach((srcPos, depId) -> {
+                if (depId == NOT_DEPENDENT) {
+                    renderFilledUnitCube(
+                            poseStack,
+                            bufferSource,
+                            srcPos,
+                            0,
+                            1,
+                            0,
+                            0.2f
+                    );
+                } else {
+                    var startC = FastColor.ARGB32.color(255, 0, 0, 255);
+                    var endC = FastColor.ARGB32.color(255, 255, 255, 255);
+                    var di = infoHolder.lookup(depId);
+                    renderLine(poseStack, bufferSource, srcPos, di.position, -0.1f, startC, endC);
+                }
+            });
+        } catch (Throwable t) {
+            // Fuck it
+        }
     }
 
     public static void renderFilledUnitCube(PoseStack poseStack, MultiBufferSource bufferSource, BlockPos pos, float red, float green, float blue, float alpha) {
