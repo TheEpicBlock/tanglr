@@ -14,13 +14,15 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import nl.theepicblock.tanglr.objects.ItemDependencyComponent;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.List;
+
 public class ItemEvents {
-    @SubscribeEvent
-    public static void onItemCrafted(PlayerEvent.ItemCraftedEvent e) {
+    public static ItemStack onItemCrafted(ItemStack in, List<ItemStack> inputs) {
         ItemDependencyComponent component = null;
-        var inv = e.getInventory();
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            var stack = inv.getItem(i);
+        for (var stack : inputs) {
+            if (stack == null) {
+                continue;
+            }
             var comp = stack.get(Tanglr.DEPENDENCY_COMPONENT.get());
             if (comp != null) {
                 // TODO handle crafting with multiple dependencies
@@ -29,8 +31,9 @@ public class ItemEvents {
         }
 
         if (component != null) {
-            e.getCrafting().set(Tanglr.DEPENDENCY_COMPONENT.get(), component);
+            in.set(Tanglr.DEPENDENCY_COMPONENT.get(), component);
         }
+        return in;
     }
 
     // TODO track smelting

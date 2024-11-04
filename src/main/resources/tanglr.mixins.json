@@ -11,7 +11,10 @@
     "ServerLevelMixin",
     "SetBlockStateMixin",
     "piston.MixinPistonBlockEntity",
-    "piston.MixinPistonMove"
+    "piston.MixinPistonMove",
+    "recipe.SingleInputRecipesMixin",
+    "recipe.CraftingRecipeMixin",
+    "recipe.ShapelessMixin"
   ],
   "injectors": {
     "defaultRequire": 1
