@@ -25,6 +25,6 @@ public class SetBlockStateMixin {
         if (this.level instanceof ServerLevel sl) {
             TimeLogic.enqueueBlockChange(sl, new BlockPos(x,y,z), state, result);
         }
-        return null;
+        return result;
     }
 }
