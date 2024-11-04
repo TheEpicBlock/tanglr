@@ -4,11 +4,15 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ComparatorBlock;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import nl.theepicblock.tanglr.level.FutureServerLevel;
@@ -42,11 +46,11 @@ public class TimeLogic {
             if (depId == null) {
                 // This position implicitly depends on the block that was just changed,
                 // so we'll replicate the change
-                futureLevel.setBlock(location, newState, Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+                futureLevel.setBlock(location, getFutureState(newState), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
             } else if (depId == NOT_DEPENDENT) {
                 // Kinda a hack, but we'll ignore not_dependents if the other side is air
                 if (futureLevel.getBlockState(location).isAir()) {
-                    futureLevel.setBlock(location, newState, Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+                    futureLevel.setBlock(location, getFutureState(newState), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
                     futureExt.tanglr$setDependencyId(location, null);
                 }
             }
@@ -54,6 +58,21 @@ public class TimeLogic {
             onBlockSignificantChange(level, location);
         }
         unDepend(level, location);
+    }
+
+    public static BlockState getFutureState(BlockState in) {
+        if (in.is(Blocks.REDSTONE_BLOCK) || in.is(Blocks.REPEATER) || in.is(Blocks.COMPARATOR) || in.is(BlockTags.BUTTONS)) {
+            return in.trySetValue(BlockStateProperties.POWERED, false);
+        }
+        in = in.trySetValue(BlockStateProperties.AGE_1, 1);
+        in = in.trySetValue(BlockStateProperties.AGE_2, 2);
+        in = in.trySetValue(BlockStateProperties.AGE_3, 3);
+        in = in.trySetValue(BlockStateProperties.AGE_4, 4);
+        in = in.trySetValue(BlockStateProperties.AGE_5, 5);
+        in = in.trySetValue(BlockStateProperties.AGE_7, 7);
+        in = in.trySetValue(BlockStateProperties.AGE_15, 15);
+        in = in.trySetValue(BlockStateProperties.AGE_25, 25);
+        return in;
     }
 
     @SubscribeEvent
