@@ -1,5 +1,6 @@
 package nl.theepicblock.tanglr;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -27,6 +28,10 @@ public class ClockItem extends Item {
                 sPlayer.teleportTo(present, sPlayer.getX(), sPlayer.getY(), sPlayer.getZ(), sPlayer.getYRot(), sPlayer.getXRot());
             } else {
                 var future = LevelManager.toFuture(sLevel);
+                if (future == null) {
+                    sPlayer.sendSystemMessage(Component.translatable("tanglr.unsupported_level"));
+                    return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
+                }
                 sPlayer.teleportTo(future, sPlayer.getX(), sPlayer.getY(), sPlayer.getZ(), sPlayer.getYRot(), sPlayer.getXRot());
             }
         }

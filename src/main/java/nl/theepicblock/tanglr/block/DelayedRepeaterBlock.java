@@ -64,10 +64,12 @@ public class DelayedRepeaterBlock extends DiodeBlock {
                 }
                 if (!(level instanceof FutureServerLevel)) {
                     var future = LevelManager.toFuture(level);
-                    future.setBlock(pos, state.setValue(POWERED, true).setValue(OUTPUTTING, true), 2);
-                    future.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(pos), 3, pos);
-                    if (!shouldPowered) {
-                        future.scheduleTick(pos, this, this.getDelay(state), TickPriority.VERY_HIGH);
+                    if (future != null) {
+                        future.setBlock(pos, state.setValue(POWERED, true).setValue(OUTPUTTING, true), 2);
+                        future.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(pos), 3, pos);
+                        if (!shouldPowered) {
+                            future.scheduleTick(pos, this, this.getDelay(state), TickPriority.VERY_HIGH);
+                        }
                     }
                 }
             }

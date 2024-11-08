@@ -46,19 +46,21 @@ public class TimeLogic {
                 return;
             }
             var futureLevel = LevelManager.toFuture(level);
-            var futureExt = (LevelExtension)futureLevel;
-            var depId = futureExt.tanglr$getDependencyId(location);
-            // hack to prevent chunks from loading/unloading constantly
-            futureLevel.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(location), 3, location);
-            if (depId == null) {
-                // This position implicitly depends on the block that was just changed,
-                // so we'll replicate the change
-                futureLevel.setBlock(location, getFutureState(newState), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
-            } else if (depId == NOT_DEPENDENT) {
-                // Kinda a hack, but we'll ignore not_dependents if the other side is air
-                if (futureLevel.getBlockState(location).isAir()) {
+            if (futureLevel != null) {
+                var futureExt = (LevelExtension)futureLevel;
+                var depId = futureExt.tanglr$getDependencyId(location);
+                // hack to prevent chunks from loading/unloading constantly
+                futureLevel.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(location), 3, location);
+                if (depId == null) {
+                    // This position implicitly depends on the block that was just changed,
+                    // so we'll replicate the change
                     futureLevel.setBlock(location, getFutureState(newState), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
-                    futureExt.tanglr$setDependencyId(location, null);
+                } else if (depId == NOT_DEPENDENT) {
+                    // Kinda a hack, but we'll ignore not_dependents if the other side is air
+                    if (futureLevel.getBlockState(location).isAir()) {
+                        futureLevel.setBlock(location, getFutureState(newState), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+                        futureExt.tanglr$setDependencyId(location, null);
+                    }
                 }
             }
             onBlockSignificantChange(level, location);

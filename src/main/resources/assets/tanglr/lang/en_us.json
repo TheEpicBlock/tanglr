@@ -1,5 +1,6 @@
 {
   "itemGroup.tanglr": "Tanglr Items",
   "item.tanglr.clock": "Time Tanglr Clock",
-  "block.tanglr.delayed_repeater": "Delayed repeater"
+  "block.tanglr.delayed_repeater": "Delayed repeater",
+  "tanglr.unsupported_level": "This world does not have a future"
 }

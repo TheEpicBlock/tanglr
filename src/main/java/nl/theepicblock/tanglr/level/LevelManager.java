@@ -6,10 +6,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import nl.theepicblock.tanglr.Tanglr;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 
 /**
@@ -39,6 +42,7 @@ public class LevelManager {
         return ResourceKey.create(present.registryKey(), futureName);
     }
 
+    @Nullable
     public static ServerLevel toFuture(ServerLevel present) {
         var ref = toFutureCache.computeIfAbsent(present, p -> {
             var futureKey = toFuture(p.dimension());
@@ -64,8 +68,10 @@ public class LevelManager {
         return ResourceKey.create(future.registryKey(), presentName);
     }
 
+    @NotNull
     public static ServerLevel toPresent(ServerLevel future) {
         var presentKey = toPresent(future.dimension());
-        return future.getServer().getLevel(presentKey);
+        // A future level must be created only if there is a corresponding present
+        return Objects.requireNonNull(future.getServer().getLevel(presentKey));
     }
 }
