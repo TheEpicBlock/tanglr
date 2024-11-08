@@ -63,8 +63,8 @@ public class LevelManager {
 
     public static ResourceKey<Level> toPresent(ResourceKey<Level> future) {
         var futureName = future.location().getPath();
-        var split = futureName.split("(?<!_)_", 2);
-        var presentName = ResourceLocation.fromNamespaceAndPath(split[0], split[1]);
+        var split = futureName.split("(?<!_)_(?!_)", 2);
+        var presentName = ResourceLocation.fromNamespaceAndPath(split[0].replace("__", "_"), split[1]);
         return ResourceKey.create(future.registryKey(), presentName);
     }
 
@@ -72,6 +72,10 @@ public class LevelManager {
     public static ServerLevel toPresent(ServerLevel future) {
         var presentKey = toPresent(future.dimension());
         // A future level must be created only if there is a corresponding present
-        return Objects.requireNonNull(future.getServer().getLevel(presentKey));
+        var presentLevel = future.getServer().getLevel(presentKey);
+        if (presentLevel == null) {
+            throw new NullPointerException("Couldn't find level named "+presentKey);
+        }
+        return presentLevel;
     }
 }
