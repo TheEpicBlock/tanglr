@@ -20,10 +20,10 @@ public class SetBlockStateMixin {
     Level level;
 
     @WrapOperation(method = "setBlockState(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Lnet/minecraft/world/level/block/state/BlockState;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunkSection;setBlockState(IIILnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/world/level/block/state/BlockState;"))
-    public BlockState onBlockChanged(LevelChunkSection instance, int x, int y, int z, BlockState state, Operation<BlockState> original) {
+    public BlockState onBlockChanged(LevelChunkSection instance, int x, int y, int z, BlockState state, Operation<BlockState> original, BlockPos pos, BlockState state2, boolean isMoving) {
         var result = original.call(instance,x,y,z,state);
         if (this.level instanceof ServerLevel sl) {
-            TimeLogic.enqueueBlockChange(sl, new BlockPos(x,y,z), state, result);
+            TimeLogic.enqueueBlockChange(sl, pos, state, result);
         }
         return result;
     }
