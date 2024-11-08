@@ -17,7 +17,6 @@ public class BlockPositionInfo {
     public ResourceKey<Level> level;
     public long generation;
     public boolean hasDependencies;
-//    public long dependency;
     public @Nullable LongList dependentBlocks;
 
     public static BlockPositionInfo fromNbt(CompoundTag tag, HolderLookup.Provider levelRegistry) {
@@ -47,6 +46,7 @@ public class BlockPositionInfo {
         return tag;
     }
 
+    @Nullable
     public Level getLevel(Level anythingReally) {
         return anythingReally.getServer().getLevel(this.level);
     }

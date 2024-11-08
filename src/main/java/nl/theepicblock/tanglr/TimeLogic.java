@@ -181,7 +181,8 @@ public class TimeLogic {
             if (positionInfo.dependentBlocks != null) {
                 for (long dependant : positionInfo.dependentBlocks) {
                     var dependantInfo = infoHolder.lookup(dependant);
-                    dependantInfo.getLevel(level).setBlock(dependantInfo.position, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+                    var depLevel = dependantInfo.getLevel(level);
+                    if (depLevel != null) depLevel.setBlock(dependantInfo.position, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
                 }
                 positionInfo.dependentBlocks.clear();
             }
