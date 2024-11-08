@@ -4,8 +4,10 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -46,6 +48,8 @@ public class TimeLogic {
             var futureLevel = LevelManager.toFuture(level);
             var futureExt = (LevelExtension)futureLevel;
             var depId = futureExt.tanglr$getDependencyId(location);
+            // hack to prevent chunks from loading/unloading constantly
+            futureLevel.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(location), 3, location);
             if (depId == null) {
                 // This position implicitly depends on the block that was just changed,
                 // so we'll replicate the change
