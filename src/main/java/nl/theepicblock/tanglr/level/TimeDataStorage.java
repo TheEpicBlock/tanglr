@@ -1,5 +1,7 @@
 package nl.theepicblock.tanglr.level;
 
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -11,8 +13,8 @@ import net.minecraft.world.level.saveddata.SavedData;
 import java.util.HashMap;
 
 public class TimeDataStorage extends SavedData {
-    public final HashMap<BlockPos, Long> infoIds = new HashMap<>();
-    public final HashMap<BlockPos, Long> depIds = new HashMap<>();
+    public final Object2LongMap<BlockPos> infoIds = new Object2LongOpenHashMap<>();
+    public final Object2LongMap<BlockPos> depIds = new Object2LongOpenHashMap<>();
 
     public static TimeDataStorage load(CompoundTag tag, HolderLookup.Provider levelRegistry) {
         var s = new TimeDataStorage();

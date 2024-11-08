@@ -1,5 +1,6 @@
 package nl.theepicblock.tanglr.mixin;
 
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -61,12 +62,12 @@ public abstract class ServerLevelMixin implements LevelExtension {
     }
 
     @Override
-    public HashMap<BlockPos,Long> tanglr$getInternalInfo() {
+    public Object2LongMap<BlockPos> tanglr$getInternalInfo() {
         return this.storage.infoIds;
     }
 
     @Override
-    public HashMap<BlockPos,Long> tanglr$getInternalDependency() {
+    public Object2LongMap<BlockPos> tanglr$getInternalDependency() {
         return this.storage.depIds;
     }
 }

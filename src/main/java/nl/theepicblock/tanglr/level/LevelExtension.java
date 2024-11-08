@@ -1,5 +1,6 @@
 package nl.theepicblock.tanglr.level;
 
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.core.BlockPos;
 
 import java.util.HashMap;
@@ -21,6 +22,6 @@ public interface LevelExtension {
 
 
     // DEBUG ONLY
-    HashMap<BlockPos, Long> tanglr$getInternalInfo();
-    HashMap<BlockPos, Long> tanglr$getInternalDependency();
+    Object2LongMap<BlockPos> tanglr$getInternalInfo();
+    Object2LongMap<BlockPos> tanglr$getInternalDependency();
 }
