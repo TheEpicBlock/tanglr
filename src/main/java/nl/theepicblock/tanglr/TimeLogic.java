@@ -54,7 +54,9 @@ public class TimeLogic {
                 if (depId == null) {
                     // This position implicitly depends on the block that was just changed,
                     // so we'll replicate the change
-                    futureLevel.setBlock(location, getFutureState(newState), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+                    try {
+                        futureLevel.setBlock(location, getFutureState(newState), Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+                    } catch (NullPointerException ignored) {} // Hack because we do cursed things that break FOUP
                 } else if (depId == NOT_DEPENDENT) {
                     // Kinda a hack, but we'll ignore not_dependents if the other side is air
                     if (futureLevel.getBlockState(location).isAir()) {
