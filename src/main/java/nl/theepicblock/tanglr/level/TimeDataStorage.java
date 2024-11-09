@@ -10,8 +10,6 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.saveddata.SavedData;
 
-import java.util.HashMap;
-
 public class TimeDataStorage extends SavedData {
     public final Object2LongMap<BlockPos> infoIds = new Object2LongOpenHashMap<>();
     public final Object2LongMap<BlockPos> depIds = new Object2LongOpenHashMap<>();
