@@ -56,7 +56,6 @@ public class Tanglr {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.tanglr"))
-            .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(() -> CLOCK_ITEM.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 // For your own tabs, this method is preferred over the event
