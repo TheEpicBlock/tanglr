@@ -2,6 +2,7 @@ package nl.theepicblock.tanglr;
 
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
@@ -32,7 +33,7 @@ public class TimeLogic {
      * @param newState the new state of the block
      */
     public static void enqueueBlockChange(ServerLevel level, BlockPos location, BlockState newState, BlockState originalState) {
-        if (level instanceof FutureServerLevel futureLevel) {
+        if (level instanceof FutureServerLevel) {
             // Changing blocks in the future does not do anything
             // There cannot be a dependency on an object in the future dimension,
             // since by definition, the future refers to a location far ahead of anything else.
@@ -45,6 +46,10 @@ public class TimeLogic {
             }
             var futureLevel = LevelManager.toFuture(level);
             if (futureLevel != null) {
+                if (!futureLevel.hasChunk(SectionPos.blockToSectionCoord(location.getX()), SectionPos.blockToSectionCoord(location.getZ()))) {
+                    return;
+                }
+
                 var futureExt = (LevelExtension)futureLevel;
                 var depId = futureExt.tanglr$getDependencyId(location);
                 // hack to prevent chunks from loading/unloading constantly
