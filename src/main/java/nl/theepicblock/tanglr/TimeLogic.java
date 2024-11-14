@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import nl.theepicblock.tanglr.level.FutureServerLevel;
@@ -46,10 +47,6 @@ public class TimeLogic {
             }
             var futureLevel = LevelManager.toFuture(level);
             if (futureLevel != null) {
-                if (!futureLevel.hasChunk(SectionPos.blockToSectionCoord(location.getX()), SectionPos.blockToSectionCoord(location.getZ()))) {
-                    return;
-                }
-
                 var futureExt = (LevelExtension)futureLevel;
                 var depId = futureExt.tanglr$getDependencyId(location);
                 // hack to prevent chunks from loading/unloading constantly
