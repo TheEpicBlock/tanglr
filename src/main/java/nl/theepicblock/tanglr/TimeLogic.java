@@ -210,7 +210,7 @@ public class TimeLogic {
         if (level.isClientSide()) return;
         var levelExt = (LevelExtension)level;
         var depId = levelExt.tanglr$getDependencyId(pos);
-        if (depId == null) return;
+        if (depId == null || depId == NOT_DEPENDENT) return;
         var selfId = levelExt.tanglr$getInfoId(pos);
         var infoHolder = PositionInfoHolder.get(level.getServer());
         levelExt.tanglr$setDependencyId(pos, null);
