@@ -20,6 +20,7 @@ public interface LevelExtension {
     void tanglr$setDependencyId(BlockPos pos, Long id);
 
     BoundingBox tanglr$getActivationBox();
+    void tanglr$setActivationBox(BoundingBox b);
 
     // DEBUG ONLY
     Object2LongMap<BlockPos> tanglr$getInternalInfo();

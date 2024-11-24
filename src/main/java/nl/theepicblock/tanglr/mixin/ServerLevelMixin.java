@@ -67,6 +67,12 @@ public abstract class ServerLevelMixin implements LevelExtension {
     }
 
     @Override
+    public void tanglr$setActivationBox(BoundingBox b) {
+        this.storage.activationBox = b;
+        this.storage.setDirty();
+    }
+
+    @Override
     public Object2LongMap<BlockPos> tanglr$getInternalInfo() {
         return this.storage.infoIds;
     }

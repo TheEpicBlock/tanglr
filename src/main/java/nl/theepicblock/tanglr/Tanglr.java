@@ -1,6 +1,10 @@
 package nl.theepicblock.tanglr;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.logging.LogUtils;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -11,6 +15,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
@@ -19,12 +24,14 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import nl.theepicblock.tanglr.block.DelayedRepeaterBlock;
 import nl.theepicblock.tanglr.block.TimeMoverBlock;
+import nl.theepicblock.tanglr.level.LevelExtension;
 import nl.theepicblock.tanglr.objects.ItemDependencyComponent;
 import org.slf4j.Logger;
 
@@ -79,11 +86,39 @@ public class Tanglr {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        NeoForge.EVENT_BUS.addListener(this::registerCommands);
         NeoForge.EVENT_BUS.register(TimeLogic.class);
         NeoForge.EVENT_BUS.register(ItemEvents.class);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
+    }
+
+    private void registerCommands(RegisterCommandsEvent e) {
+        var disp = e.getDispatcher();
+        disp.register(Commands.literal("tanglr")
+                .then(Commands.literal("boundingbox")
+                        .requires(p -> p.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .executes(ctx -> {
+                            var lvl = ctx.getSource().getLevel();
+                            var bb = ((LevelExtension)lvl).tanglr$getActivationBox();
+                            ctx.getSource().sendSuccess(() -> {
+                                return Component.literal("The bounding box for this world is "+bb);
+                            }, false);
+                            return 1;
+                        })
+                        .then(Commands.argument("pos1", BlockPosArgument.blockPos())
+                                .then(Commands.argument("pos2", BlockPosArgument.blockPos())
+                                        .requires(p -> p.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                                        .executes(ctx -> {
+                                            var lvl = ctx.getSource().getLevel();
+                                            var bb = BoundingBox.fromCorners(BlockPosArgument.getBlockPos(ctx, "pos1"),BlockPosArgument.getBlockPos(ctx, "pos2"));
+                                            ((LevelExtension)lvl).tanglr$setActivationBox(bb);
+                                            ctx.getSource().sendSuccess(() -> {
+                                                return Component.literal("Set tanglr bounding box for "+lvl+" to "+bb);
+                                            }, true);
+                                            return 1;
+                                        })))));
     }
 }
