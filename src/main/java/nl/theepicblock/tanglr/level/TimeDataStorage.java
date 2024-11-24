@@ -4,15 +4,14 @@ import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.saveddata.SavedData;
 
 public class TimeDataStorage extends SavedData {
     public final Object2LongMap<BlockPos> infoIds = new Object2LongOpenHashMap<>();
     public final Object2LongMap<BlockPos> depIds = new Object2LongOpenHashMap<>();
+    public BoundingBox activationBox = new BoundingBox(0,0,0,0,0,0);
 
     public static TimeDataStorage load(CompoundTag tag, HolderLookup.Provider levelRegistry) {
         var s = new TimeDataStorage();
@@ -27,6 +26,11 @@ public class TimeDataStorage extends SavedData {
             var pos = NbtUtils.readBlockPos((CompoundTag)i, "pos").orElseThrow();
             var v = ((CompoundTag)i).getLong("v");
             s.depIds.put(pos, v);
+        }
+        if (tag.contains("activationBox")) {
+            BoundingBox.CODEC.parse(NbtOps.INSTANCE, tag.get("activationBox")).ifSuccess(res -> {
+                s.activationBox = res;
+            });
         }
         return s;
     }
@@ -49,6 +53,9 @@ public class TimeDataStorage extends SavedData {
         }
         compoundTag.put("infoIds", infos);
         compoundTag.put("depIds", deps);
+        BoundingBox.CODEC.encodeStart(NbtOps.INSTANCE, this.activationBox).ifSuccess(res -> {
+            compoundTag.put("activationBox", res);
+        });
         return compoundTag;
     }
 

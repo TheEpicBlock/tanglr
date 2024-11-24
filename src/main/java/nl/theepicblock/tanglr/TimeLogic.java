@@ -34,6 +34,8 @@ public class TimeLogic {
      * @param newState the new state of the block
      */
     public static void enqueueBlockChange(ServerLevel level, BlockPos location, BlockState newState, BlockState originalState) {
+        if (!((LevelExtension)level).tanglr$getActivationBox().isInside(location)) return;
+
         if (level instanceof FutureServerLevel) {
             // Changing blocks in the future does not do anything
             // There cannot be a dependency on an object in the future dimension,

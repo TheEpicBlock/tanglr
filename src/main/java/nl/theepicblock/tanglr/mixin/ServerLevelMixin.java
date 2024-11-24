@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.world.RandomSequences;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -58,6 +59,11 @@ public abstract class ServerLevelMixin implements LevelExtension {
             this.storage.depIds.put(pos, id);
         }
         this.storage.setDirty();
+    }
+
+    @Override
+    public BoundingBox tanglr$getActivationBox() {
+        return this.storage.activationBox;
     }
 
     @Override
