@@ -50,7 +50,7 @@ public class Tanglr {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     // deferred objects
-    public static final DeferredItem<ClockItem> CLOCK_ITEM = ITEMS.registerItem("clock", ClockItem::new, new Item.Properties().rarity(Rarity.RARE));
+    public static final DeferredItem<ClockItem> CLOCK_ITEM = ITEMS.registerItem("clock", ClockItem::new, new Item.Properties().rarity(Rarity.RARE).stacksTo(1));
     public static final DeferredBlock<DelayedRepeaterBlock> DELAYED_REPEATER = BLOCKS.registerBlock("delayed_repeater", DelayedRepeaterBlock::new, BlockBehaviour.Properties.of().instabreak().sound(SoundType.STONE).pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<TimeMoverBlock> TIME_MOVER = BLOCKS.registerBlock("time_mover", TimeMoverBlock::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(3.0F).requiresCorrectToolForDrops().isRedstoneConductor((a,b,c) -> false));
     public static final DeferredItem<BlockItem> DELAYED_REPEATER_ITEM = ITEMS.registerSimpleBlockItem(DELAYED_REPEATER);
