@@ -76,6 +76,9 @@ public class TimeLogic {
         if (from.trySetValue(BlockStateProperties.POWERED, false) == to.trySetValue(BlockStateProperties.POWERED, false)) {
             return true;
         }
+        if (from.getBlock() == Blocks.REDSTONE_ORE && to.getBlock() == Blocks.REDSTONE_ORE) {
+            return true;
+        }
         return false;
     }
 
