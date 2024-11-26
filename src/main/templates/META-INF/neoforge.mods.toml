@@ -30,7 +30,8 @@ updateJSONURL="https://api.modrinth.com/updates/${modrinth_project}/forge_update
 displayURL="${github_url}" #optional
 
 # A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="examplemod.png" #optional
+logoFile="tanglr_icon.png"
+logoBlur=false
 
 # A text field displayed in the mod UI
 #credits="" #optional
